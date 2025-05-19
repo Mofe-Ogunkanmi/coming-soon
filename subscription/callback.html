@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Redirecting to Sports Mates</title>
+    <script>
+      // Extract URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const session_id = params.get("session_id");
+      const status = params.get("status");
+
+      // Redirect to app
+      if (session_id && status === "success") {
+        window.location.href = `sportsmates://subscription/callback?session_id=${session_id}&status=${status}`;
+      } else {
+        window.location.href =
+          "sportsmates://subscription/callback?status=cancel";
+      }
+
+      // Fallback to app store if app not installed
+      // setTimeout(function() {
+      //   window.location.href = 'https://apps.apple.com/app/YOUR_APP_ID'; // or Play Store link
+      // }, 1000);
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to Sports Mates app...</p>
+  </body>
+</html>
