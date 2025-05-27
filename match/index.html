@@ -64,27 +64,54 @@
     <script>
       // Handle both hash (#) and legacy ?userId= formats
       function getUserId() {
-        const hashId = window.location.hash.substring(1);
-        if (hashId) return hashId;
+        // First try to get from hash (new format: #83)
+        const hash = window.location.hash;
+        if (hash && hash.length > 1) {
+          const hashId = hash.substring(1).trim();
+          if (hashId) {
+            console.log("Found userId in hash:", hashId);
+            return hashId;
+          }
+        }
 
+        // Fallback to legacy query parameter format (?userId=83)
         const params = new URLSearchParams(window.location.search);
-        return params.get("userId");
+        const queryId = params.get("userId");
+        if (queryId) {
+          console.log("Found userId in query params:", queryId);
+          return queryId.trim();
+        }
+
+        return null;
       }
 
       function redirectToApp() {
         const userId = getUserId();
         const statusEl = document.getElementById("status");
 
+        console.log("Extracted userId:", userId);
+        console.log("Current URL:", window.location.href);
+
         if (!userId) {
           statusEl.innerHTML = `
           <p style="color: #dc3545; font-weight: 500;">Invalid connection link</p>
           <p>Please scan the QR code again or open the app directly.</p>
+          <p style="font-size: 12px; color: #666; margin-top: 10px;">
+            Debug: ${window.location.href}
+          </p>
         `;
           return;
         }
 
+        // Update status to show we found the user ID
+        statusEl.innerHTML = `
+          <p>Connecting to user ${userId}...</p>
+        `;
+
         // Try deep link (app)
-        window.location.href = `sportsmates://match?userId=${userId}`;
+        const deepLink = `sportsmates://match?userId=${userId}`;
+        console.log("Attempting deep link:", deepLink);
+        window.location.href = deepLink;
 
         // Fallback for iOS/web if app isn't installed
         setTimeout(() => {
@@ -97,6 +124,9 @@
                     margin-top: 10px;">
             Download Sports Mates
           </a>
+          <p style="font-size: 12px; color: #666; margin-top: 10px;">
+            User ID: ${userId}
+          </p>
         `;
         }, 1500);
       }
