@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sports Mates - Connect</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        text-align: center;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+      .container {
+        max-width: 400px;
+        margin: 40px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+      .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-top: 4px solid #6f42c1;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 30px auto;
+      }
+      .logo img {
+        max-width: 180px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+      .status {
+        margin-top: 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <img
+          src="https://sports-mates-app.netlify.app/logo.png"
+          alt="Sports Mates"
+        />
+      </div>
+      <div class="spinner"></div>
+      <div id="status" class="status">
+        <p>Connecting you to Sports Mates...</p>
+      </div>
+    </div>
+
+    <script>
+      // Handle both hash (#) and legacy ?userId= formats
+      function getUserId() {
+        const hashId = window.location.hash.substring(1);
+        if (hashId) return hashId;
+
+        const params = new URLSearchParams(window.location.search);
+        return params.get("userId");
+      }
+
+      function redirectToApp() {
+        const userId = getUserId();
+        const statusEl = document.getElementById("status");
+
+        if (!userId) {
+          statusEl.innerHTML = `
+          <p style="color: #dc3545; font-weight: 500;">Invalid connection link</p>
+          <p>Please scan the QR code again or open the app directly.</p>
+        `;
+          return;
+        }
+
+        // Try deep link (app)
+        window.location.href = `sportsmates://match?userId=${userId}`;
+
+        // Fallback for iOS/web if app isn't installed
+        setTimeout(() => {
+          statusEl.innerHTML = `
+          <p>Don't have the app?</p>
+          <a href="https://apps.apple.com/app/idYOUR_APP_ID" 
+             style="background: #6f42c1; color: white; 
+                    padding: 10px 20px; border-radius: 8px;
+                    text-decoration: none; display: inline-block;
+                    margin-top: 10px;">
+            Download Sports Mates
+          </a>
+        `;
+        }, 1500);
+      }
+
+      // Start redirect flow
+      window.addEventListener("load", () => {
+        setTimeout(redirectToApp, 800);
+      });
+    </script>
+  </body>
+</html>
