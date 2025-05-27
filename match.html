@@ -68,10 +68,9 @@
         }
 
         // Create deep link URL
-        const deepLink = `sportsmates://match?userId=${userId}`;
+        const deepLink = `https://sports-mates-app.netlify.app/match.html?userId=${userId}`;
         console.log("Attempting to redirect to:", deepLink);
 
-        // Try to redirect to the app
         window.location.href = deepLink;
 
         // Update the UI to show what's happening
